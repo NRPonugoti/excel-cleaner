@@ -1,0 +1,59 @@
+================================================================
+  ⚠  ADMIN TOOLS FOLDER — DO NOT EXPOSE PUBLICLY  ⚠
+================================================================
+
+This folder contains administrative utilities that must NOT be
+reachable through any web URL. They are designed to be opened
+directly from the host file system (file://) by an administrator
+only.
+
+----------------------------------------------------------------
+WHAT IS IN HERE
+----------------------------------------------------------------
+
+  hash-password.html   Generates SHA-256 hashes for new login
+                       credentials. Anyone who can load this page
+                       can compute hashes for guessed passwords
+                       — a major leg-up for an attacker.
+
+----------------------------------------------------------------
+HOW THIS FOLDER IS PROTECTED
+----------------------------------------------------------------
+
+  IIS  : Blocked via <hiddenSegments> in the project root
+         web.config. Requests to /tools/* return 404.
+  nginx: Blocked via `location /tools/ { deny all; }` in
+         nginx.conf (if you added one).
+  Static-host CDN (Netlify / Cloudflare / Azure Static Web Apps):
+         Blocked via the matching redirect / route rule in the
+         host's config file (_redirects, staticwebapp.config.json,
+         etc.).
+
+If you are deploying to a NEW environment, you MUST replicate
+that block before going live. Otherwise admin tooling will be
+publicly exposed.
+
+----------------------------------------------------------------
+HOW ADMINS USE THE TOOLS HERE
+----------------------------------------------------------------
+
+  1. Log on to the host machine directly (RDP / console).
+  2. Browse to this folder in Windows Explorer.
+  3. Double-click the .html file. It opens via file:// in the
+     default browser. Web Crypto API works in file:// context.
+  4. Use the tool, copy the output, paste into login.js.
+  5. Save login.js. Tell users to hard-refresh (Ctrl + F5).
+
+----------------------------------------------------------------
+SAFE TO DELETE?
+----------------------------------------------------------------
+
+If you never want to rotate the password again from this host,
+yes — you can delete this folder. The app will continue working.
+But you will lose the convenient rotation helper, and will have
+to compute SHA-256 hashes manually next time.
+
+================================================================
+  Document owner: Excel Cleaner admin · BCX-Telkom
+  Last reviewed:  on every deploy
+================================================================
